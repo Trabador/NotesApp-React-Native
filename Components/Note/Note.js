@@ -1,5 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native';
+import deleteIcon from '../../Static/images/delete.png';
+import editIcon from '../../Static/images/edit.png';
 
 class Note extends React.Component{
     constructor(props){
@@ -9,8 +11,8 @@ class Note extends React.Component{
             message: this.props.message
         };
 
-        //this.handleEdit = this.handleEdit.bind(this);
-        //this.handleRemove = this.handleRemove.bind(this);
+        this.handleEdit = this.handleEdit.bind(this);
+        this.handleRemove = this.handleRemove.bind(this);
     }
 
     componentWillReceiveProps(nextProps){
@@ -23,7 +25,7 @@ class Note extends React.Component{
         return(this.state.message !== nextState.message);
     }
 
-    /*handleEdit(){
+    handleEdit(){
         const noteID = this.state.id;
         this.props.editNote(noteID);
     }
@@ -31,20 +33,23 @@ class Note extends React.Component{
     handleRemove(){
         const noteID = this.state.id;
         this.props.removeNote(noteID);
-    }*/
+    }
 
     render(){
         return(
-            /*<div className="note fade-in">
-                <span className="deletebtn" onClick={this.handleRemove}>
-                   <img src={deleteIcon} widt='25' height='25' alt='delete'/>
-                </span>
-                <span className="editbtn" onClick={this.handleEdit}>    
-                    <img src={editIcon}  widt='25' height='25' alt='edit'/>
-                </span>
-                <p className="noteContent">{ this.state.message }</p>
-            </div>*/
-            <Text>{this.state.message}</Text>
+            <View>
+                <Text>{this.state.message}</Text>
+                <TouchableHighlight onPress={this.handleRemove}>
+                    <Image
+                        source={deleteIcon}
+                    />
+                </TouchableHighlight>
+                <TouchableHighlight onPress={this.handleEdit}>
+                    <Image
+                        source={editIcon}
+                    />
+                </TouchableHighlight>
+            </View>
         );
     }
 }
