@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, List, FlatList, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, FlatList } from 'react-native';
 import firebase from 'firebase';
 import {config} from './config';
 import Note from './Components/Note/Note';
@@ -19,7 +19,6 @@ export default class App extends React.Component {
     firebase.initializeApp(config);
     this.databaseRef = firebase.database().ref();
 
-    this.displayNotes = this.displayNotes.bind(this);
     this.addNote = this.addNote.bind(this);
     this.removeNote = this.removeNote.bind(this);
     this.editNote = this.editNote.bind(this);
@@ -28,15 +27,21 @@ export default class App extends React.Component {
 
 
   componentWillMount(){
-    //Show Notes 
+    this.addNotesListener();
+    this.deleteNotesListener();
+    this.updateNotesListener();
+  }
+
+  addNotesListener(){
     this.databaseRef.child('notes').on('child_added', (snapshot) => {
       let note = {data: snapshot.val(), id: snapshot.key};
       this.setState({
         noteList: this.state.noteList.concat(note)
       });
     });
+  }
 
-    //Delete Note
+  deleteNotesListener(){
     this.databaseRef.child('notes').on('child_removed', (snapshot) => {
       let aux = this.state.noteList;
       for(let i=0; i<aux.length; i++){ //search for the note deleted
@@ -47,8 +52,9 @@ export default class App extends React.Component {
       }
       this.setState({noteList: aux, editnoteID: null, action: 'add', editMessage: ''});
     });
+  }
 
-    //Update Note
+  updateNotesListener(){
     this.databaseRef.child('notes').on('child_changed', (snapshot) => {
       let aux = this.state.noteList;
       for(let i=0; i<aux.length; i++){
@@ -61,21 +67,25 @@ export default class App extends React.Component {
     });
   }
 
+
+  _renderItem = ({item}) => (
+    <Note 
+      message={item.data.message} id={item.id}  
+      removeNote={this.removeNote}
+      editNote={this.editNote}
+    />
+  );
+
+  _keyExtractor = (item, index) => item.id;
+
   displayNotes(){
     return(
-      <ScrollView>
-        
-          {this.state.noteList.map(note => {
-            return(
-              <Note 
-                message={note.data.message} id={note.id} key={note.id} 
-                removeNote={this.removeNote}
-                editNote={this.editNote}
-              />
-            )
-          })}
-        
-      </ScrollView>
+        <FlatList
+          data={this.state.noteList}
+          extraData={this.state}
+          renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
+        />
     );
   }
 
