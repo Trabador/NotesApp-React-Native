@@ -1,9 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { Text, View, FlatList, ImageBackground } from 'react-native';
 import firebase from 'firebase';
 import {config} from './config';
+import {styles} from './AppStyle';
 import Note from './Components/Note/Note';
 import NoteForm from './Components/NoteForm/NoteForm';
+import backgroundImage from './Static/images/background.jpg';
 
 export default class App extends React.Component {
   constructor(){
@@ -23,6 +25,10 @@ export default class App extends React.Component {
     this.removeNote = this.removeNote.bind(this);
     this.editNote = this.editNote.bind(this);
     this.updateNote = this.updateNote.bind(this);
+
+    console.ignoredYellowBox = [
+      'Setting a timer'
+    ];//not should be use, need to change when firebase team comes with a solution to "Setting a timer for a long period ...."
   }
 
 
@@ -57,7 +63,7 @@ export default class App extends React.Component {
   updateNotesListener(){
     this.databaseRef.child('notes').on('child_changed', (snapshot) => {
       let aux = this.state.noteList;
-      for(let i=0; i<aux.length; i++){
+      for(let i=0; i<aux.length; i++){//serach for the note to update
         if(aux[i].id === snapshot.key){
           aux[i].data = snapshot.val();
           break;
@@ -80,12 +86,14 @@ export default class App extends React.Component {
 
   displayNotes(){
     return(
+        <View style={styles.notesDisplay}>
         <FlatList
           data={this.state.noteList}
           extraData={this.state}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
         />
+        </View>
     );
   }
 
@@ -122,24 +130,28 @@ export default class App extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text>Notes in React</Text>
-        {this.displayNotes()}
-        <NoteForm 
-          addNote={this.addNote} updateNote={this.updateNote} 
-          action={this.state.action} message={this.state.editMessage}
-          noteID={this.state.editnoteID}
-        />
-      </View>
+      <ImageBackground 
+        style={styles.container}
+        source={backgroundImage}
+      >
+          <View 
+            style={styles.notesHeader}
+          >
+            <Text style={styles.headerText}>Notes in React</Text>
+          </View>
+          {this.displayNotes()}
+          <View 
+            style = {styles.notesForm}
+          >
+            <NoteForm 
+              addNote={this.addNote} updateNote={this.updateNote} 
+              action={this.state.action} message={this.state.editMessage}
+              noteID={this.state.editnoteID}
+            />
+          </View>
+      </ImageBackground>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+

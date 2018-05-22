@@ -1,7 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Image } from 'react-native';
+import { Text, View, TouchableHighlight, Image } from 'react-native';
 import deleteIcon from '../../Static/images/delete.png';
 import editIcon from '../../Static/images/edit.png';
+import {noteStyles} from './NoteStyle';
 
 class Note extends React.Component{
     constructor(props){
@@ -37,18 +38,27 @@ class Note extends React.Component{
 
     render(){
         return(
-            <View>
-                <Text>{this.state.message}</Text>
-                <TouchableHighlight onPress={this.handleRemove}>
+            <View style={noteStyles.noteContainer}>
+                <Text style={noteStyles.textContainer}>{this.state.message}</Text>
+                <TouchableHighlight 
+                    style={noteStyles.imageContainer}
+                    onPress={this.handleEdit}
+                >
                     <Image
-                        source={deleteIcon}
-                    />
-                </TouchableHighlight>
-                <TouchableHighlight onPress={this.handleEdit}>
-                    <Image
+                        style={noteStyles.imageContainer}
                         source={editIcon}
                     />
                 </TouchableHighlight>
+                <View style={noteStyles.buttonsContainer}>
+                    <TouchableHighlight 
+                        style={noteStyles.imageContainer}
+                        onPress={this.handleRemove}
+                    >
+                        <Image
+                            source={deleteIcon}
+                        />
+                    </TouchableHighlight>
+                </View>
             </View>
         );
     }

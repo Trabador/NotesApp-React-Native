@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { View, TextInput, Button } from 'react-native';
+import { noteFormStyles } from './NoteFormStyle';
 
 class NoteForm extends React.Component{
     constructor(props){
@@ -61,11 +62,13 @@ class NoteForm extends React.Component{
         return(
             <View>
                 <TextInput 
+                    style={noteFormStyles.textStyle}
                     value={this.state.textContet}
                     placeholder='Escribe una nueva nota aquí...'
                     onChangeText={(text) => this.setState({textContet: text})}
                 />
                 <Button 
+                    style={noteFormStyles.buttonStyle}
                     title={buttonTitle}
                     onPress={this.handleSendText}
                 />
