@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, FlatList, ImageBackground } from 'react-native';
+import { Text, View, FlatList, ImageBackground, ToastAndroid, KeyboardAvoidingView } from 'react-native';
 import firebase from 'firebase';
 import {config} from './config';
 import {styles} from './AppStyle';
@@ -28,7 +28,8 @@ export default class App extends React.Component {
 
     console.ignoredYellowBox = [
       'Setting a timer'
-    ];//not should be use, need to change when firebase team comes with a solution to "Setting a timer for a long period ...."
+    ];/* should not be use, need to change when firebase team comes with a solution to 
+      "Setting a timer for a long period ...." issue wiht android platform*/
   }
 
 
@@ -100,13 +101,25 @@ export default class App extends React.Component {
   addNote(newRecord){
     const newNote = this.databaseRef.child('notes').push();
     newNote.set(newRecord);
+    ToastAndroid.showWithGravity(
+      'Nota Agregada',
+      ToastAndroid.SHORT,
+      ToastAndroid.CENTER
+    );
   }
 
   removeNote(noteID){
     const notesRef = this.databaseRef.child('notes');
     const childToRemove= notesRef.child(noteID);
     childToRemove.remove()
-      .then(() => {console.log(`child removed: ${noteID}`);})
+      .then(
+        () => {console.log(`child removed: ${noteID}`)},
+        ToastAndroid.showWithGravity(
+          'Nota Eliminada',
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        )
+      )
       .catch(error => {console.log(`Error ${error.code}: ${error.message}`);});
   }
 
@@ -123,33 +136,45 @@ export default class App extends React.Component {
     if(newData.id !== null){
       const childToUpdate = this.databaseRef.child('notes').child(newData.id);
       childToUpdate.update({message: newData.newMessage})
-        .then(() => {this.setState({editnoteID: null, action: 'add', editMessage: ''})})
+        .then(
+          () => {this.setState({editnoteID: null, action: 'add', editMessage: ''})},
+          ToastAndroid.showWithGravity(
+            'Nota Actualizada',
+            ToastAndroid.SHORT,
+            ToastAndroid.CENTER
+          )
+        )
         .catch((error) => {console.log(`Error ${error.code}: ${error.message}`)});
     }
   }
 
   render() {
     return (
-      <ImageBackground 
+      <KeyboardAvoidingView
+        behavior= "padding"
         style={styles.container}
-        source={backgroundImage}
       >
-          <View 
-            style={styles.notesHeader}
-          >
-            <Text style={styles.headerText}>Notes in React</Text>
-          </View>
-          {this.displayNotes()}
-          <View 
-            style = {styles.notesForm}
-          >
-            <NoteForm 
-              addNote={this.addNote} updateNote={this.updateNote} 
-              action={this.state.action} message={this.state.editMessage}
-              noteID={this.state.editnoteID}
-            />
-          </View>
-      </ImageBackground>
+        <ImageBackground 
+          style={styles.container}
+          source={backgroundImage}
+        >
+            <View 
+              style={styles.notesHeader}
+            >
+              <Text style={styles.headerText}>Notes in React</Text>
+            </View>
+            {this.displayNotes()}
+            <View 
+              style = {styles.notesForm}
+            >
+              <NoteForm 
+                addNote={this.addNote} updateNote={this.updateNote} 
+                action={this.state.action} message={this.state.editMessage}
+                noteID={this.state.editnoteID}
+              />
+            </View>
+        </ImageBackground>
+      </KeyboardAvoidingView>
     );
   }
 }

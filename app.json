@@ -1,5 +1,11 @@
 {
   "expo": {
-    "sdkVersion": "27.0.0"
+    "sdkVersion": "27.0.0",
+    "name": "Notes",
+    "icon": "./Static/images/iconnote.png",
+    "version": "1.0.1",
+    "android":{
+      "package": "com.alexis.notes"
+    }
   }
 }

@@ -2,13 +2,14 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
-      flex: 1,//ratio 1/1
+      flex: 1//ratio 1/1
     },
     notesHeader: {
       flex:1,//ratio 1/10
       margin: 5,
       backgroundColor: '#6a6a6b90',//90 is for opacity value
-      borderRadius: 5
+      borderRadius: 5,
+      marginTop: 30 
     },
     headerText:{
       textAlign : 'center',
