@@ -9,11 +9,12 @@ class NoteForm extends React.Component{
         this.state = {
             noteID: this.props.noteID,
             action: this.props.action,
-            textContet: ''
+            textContet: null
         };
 
         this.renderButton = this.renderButton.bind(this);
         this.handleSendText = this.handleSendText.bind(this);
+        this.handleTextInput = this.handleTextInput.bind(this);
     }
 
 
@@ -51,6 +52,15 @@ class NoteForm extends React.Component{
         });
     }
 
+    handleTextInput(text){
+        if(text !== ''){
+            this.setState({ textContet: text });
+        }
+        else{
+            this.setState({ textContet: null });
+        }
+    }
+
     renderButton(){
         let buttonTitle;
         if(this.state.action === 'add'){
@@ -62,15 +72,16 @@ class NoteForm extends React.Component{
         return(
             <View>
                 <TextInput 
-                    style={noteFormStyles.textStyle}
-                    value={this.state.textContet}
+                    style={ noteFormStyles.textStyle }
+                    value={ this.state.textContet }
+                    onChangeText={ (text) => this.handleTextInput(text) }
                     placeholder='Escribe una nueva nota aquí...'
-                    onChangeText={(text) => this.setState({textContet: text})}
                 />
                 <Button 
-                    style={noteFormStyles.buttonStyle}
-                    title={buttonTitle}
-                    onPress={this.handleSendText}
+                    style={ noteFormStyles.buttonStyle }
+                    title={ buttonTitle }
+                    onPress={ this.handleSendText }
+                    disabled={ !this.state.textContet }
                 />
             </View>
         );
